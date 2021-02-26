@@ -1216,6 +1216,7 @@ Future<Nothing> Docker::stop(
   const string cmd = strings::join(" ", argv);
 
   VLOG(1) << "Running " << cmd;
+  LOG(INFO) << "Running docker command " << cmd << " on " << containerName;
 
   Try<Subprocess> s = subprocess(
       path,
@@ -1282,6 +1283,7 @@ Future<Nothing> Docker::kill(
   const string cmd = strings::join(" ", argv);
 
   VLOG(1) << "Running " << cmd;
+  LOG(INFO) << "Running docker command " << cmd << " on " << containerName;
 
   Try<Subprocess> s = subprocess(
       path,
@@ -1323,6 +1325,7 @@ Future<Nothing> Docker::rm(
   const string cmd = strings::join(" ", argv);
 
   VLOG(1) << "Running " << cmd;
+  LOG(INFO) << "Running docker command " << cmd << " on " << containerName;
 
   Try<Subprocess> s = subprocess(
       path,

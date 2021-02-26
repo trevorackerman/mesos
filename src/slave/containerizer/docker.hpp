@@ -302,6 +302,11 @@ private:
       const std::string& containerName,
       const Option<std::string>& executor);
 
+  // Gracefully stops the docker container.
+  void stop(
+      const std::string& containerName,
+      const Option<std::string>& executor);
+
   const Flags flags;
 
   Fetcher* fetcher;

@@ -38,6 +38,7 @@
 #endif // __WINDOWS__
 
 #include <stout/adaptor.hpp>
+#include <stout/duration.hpp>
 #include <stout/fs.hpp>
 #include <stout/hashmap.hpp>
 #include <stout/hashset.hpp>
@@ -2412,10 +2413,13 @@ void DockerContainerizerProcess::__destroy(
 
     containers_.erase(containerId);
 
+    LOG(INFO) << "Container " << container->containerName <<
+      " scheduled to be destroyed in " << flags.docker_remove_delay;
+
     delay(
       flags.docker_remove_delay,
       self(),
-      &Self::remove,
+      &Self::stop,
       container->containerName,
       container->executorName());
 
@@ -2486,7 +2490,7 @@ void DockerContainerizerProcess::____destroy(
   delay(
     flags.docker_remove_delay,
     self(),
-    &Self::remove,
+    &Self::stop,
     container->containerName,
     container->executorName());
 
@@ -2545,16 +2549,18 @@ void DockerContainerizerProcess::reaped(const ContainerID& containerId)
   destroy(containerId, false);
 }
 
-
-void DockerContainerizerProcess::remove(
+void DockerContainerizerProcess::stop(
     const string& containerName,
     const Option<string>& executor)
 {
-  docker->rm(containerName, true);
+  // Use the default of 10 seconds for the container to
+  // stop before issuing SIGTERM
+  docker->stop(containerName, Seconds(10), true);
   if (executor.isSome()) {
-    docker->rm(executor.get(), true);
+    docker->stop(executor.get(), Seconds(10), true);
   }
 }
+
 
 } // namespace slave {
 } // namespace internal {
